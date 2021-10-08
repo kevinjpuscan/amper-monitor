@@ -1,0 +1,25 @@
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+  external_labels:
+      monitor: 'Alertmanager'
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+#rule_files:
+#    - 'alert.rules'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['localhost:9090']
+
+  - job_name: 'amper'
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 10s 
+    static_configs:
+      - targets: ['amper:9798']
+
+ 
