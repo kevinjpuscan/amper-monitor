@@ -4,9 +4,10 @@ This project is for monitor electric energy in house.
 ## Install
 
 ```bash
-# move to /amper-exporter
 cp .env-example .env
-# set SERIAL_PORT
+# set SERIAL_PORT in .env
+
+# move to /amper-exporter
 docker build -t amper-exporter . 
 ```
 
