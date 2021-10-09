@@ -1,4 +1,4 @@
-FROM python:3.9.6-alpine3.13
+FROM arm32v7/python:3.6-buster
 
 WORKDIR /app
 

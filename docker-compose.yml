@@ -43,16 +43,17 @@ services:
       - front-tier
 
   amper:
-    image: amper-exporter/latest
+    image: amper-exporter:latest
     tty: true
     restart: always
     stdin_open: true
-    env_file: ./amper-exporter/.env
+    environment:
+      SERIAL_PORT: ${SERIAL_PORT}
     expose:
       - 9798
     ports:
       - 9798:9798
     devices:
-      - "/dev/${SERIAL_PORT}:/dev/${SERIAL_PORT}"
+      - "${SERIAL_PORT}:${SERIAL_PORT}"
     networks:
       - back-tier
