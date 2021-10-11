@@ -24,9 +24,11 @@ def get_amper_value():
 
 @app.route("/metrics")
 def updateResults():
-    r_amper=get_amper_value()
-    amper.labels('2021-06','2021-06-13').set(10)
     current_dt = datetime.datetime.now()
+    r_amper=get_amper_value()
+    day_label=current_dt.strftime("%Y-%m-%d")
+    month_label=current_dt.strftime("%Y-%m")
+    amper.labels(month_label,day_label).set(10)
     print(current_dt.strftime("%d/%m/%Y %H:%M:%S - ") + "Amper: "+ str(r_amper))
     return make_wsgi_app()
 
