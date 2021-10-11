@@ -28,7 +28,7 @@ def updateResults():
     r_amper=get_amper_value()
     day_label=current_dt.strftime("%Y-%m-%d")
     month_label=current_dt.strftime("%Y-%m")
-    amper.labels(month_label,day_label).set(10)
+    amper.labels(month_label,day_label).set(r_amper)
     print(current_dt.strftime("%d/%m/%Y %H:%M:%S - ") + "Amper: "+ str(r_amper))
     return make_wsgi_app()
 
