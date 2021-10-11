@@ -14,7 +14,7 @@ PORT=9798
 ARDUINO={}
 
 app = Flask("Amper-Exporter")  # Create flask app
-amper = Gauge('amper_energy_kwh','Energy consumed in kwh')
+amper = Gauge('amper_energy_kwh','Energy consumed in kwh',['month','day'])
 
 def get_amper_value():
   ARDUINO.write('b'.encode())
@@ -25,7 +25,7 @@ def get_amper_value():
 @app.route("/metrics")
 def updateResults():
     r_amper=get_amper_value()
-    amper.set(r_amper)
+    amper.labels('2021-06','2021-06-13').set(10)
     current_dt = datetime.datetime.now()
     print(current_dt.strftime("%d/%m/%Y %H:%M:%S - ") + "Amper: "+ str(r_amper))
     return make_wsgi_app()
