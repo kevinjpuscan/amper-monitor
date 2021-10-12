@@ -36,7 +36,7 @@ def updateResults():
 
 	current_dt = datetime.now()
 	location_dt=current_dt-timedelta(hours=-5)
-	amper_w=get_amper_value()
+	amper_w=float(get_amper_value())
 	amper_kw=amper_w/1000
 	day_label=location_dt.strftime("%Y-%m-%d")
 	month_label=location_dt.strftime("%Y-%m")
