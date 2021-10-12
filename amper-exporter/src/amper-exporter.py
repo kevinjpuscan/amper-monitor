@@ -1,6 +1,6 @@
-import datetime
+from datetime import datetime, timedelta
 import os
-from prometheus_client import make_wsgi_app, Gauge
+from prometheus_client import make_wsgi_app, Gauge, Counter
 from flask import Flask
 from waitress import serve
 import serial,time
@@ -14,7 +14,14 @@ PORT=9798
 ARDUINO={}
 
 app = Flask("Amper-Exporter")  # Create flask app
-amper = Gauge('amper_energy_kwh','Energy consumed in kwh',['month','day'])
+energy_w = Gauge('amper_energy_w','Energy consumed in w')
+energy_day_w = Gauge('amper_energy_day_w','Energy consumed in w with label day',['day'])
+energy_month_w = Gauge('amper_energy_month_w','Energy consumed in w with label month',['month'])
+power_month =Counter('amper_power_month','Total Kwh consumed by month with label month',['month'])
+power_day =Counter('amper_power_day','Total Kwh consumed by month with label day',['day'])
+
+last_day = "2021-01-01"
+last_month = "2021-01"
 
 def get_amper_value():
   ARDUINO.write('b'.encode())
@@ -24,13 +31,32 @@ def get_amper_value():
 
 @app.route("/metrics")
 def updateResults():
-    current_dt = datetime.datetime.now()
-    r_amper=get_amper_value()
-    day_label=current_dt.strftime("%Y-%m-%d")
-    month_label=current_dt.strftime("%Y-%m")
-    amper.labels(month_label,day_label).set(r_amper)
-    print(current_dt.strftime("%d/%m/%Y %H:%M:%S - ") + "Amper: "+ str(r_amper))
-    return make_wsgi_app()
+	global last_day
+	global last_month
+
+	current_dt = datetime.datetime.now()
+	location_dt=current_dt-timedelta(hours=-5)
+	amper_w=get_amper_value()
+	amper_kw=amper_w/1000
+	day_label=location_dt.strftime("%Y-%m-%d")
+	month_label=location_dt.strftime("%Y-%m")
+
+	energy_w.set(amper_w)
+	energy_month_w.labels(month_label).set(amper_w)
+	energy_day_w.labels(day_label).set(amper_w)
+
+	if day_label!=last_day:
+		last_day=day_label
+		power_day.clear()
+	
+	if month_label!=last_month:
+		last_month=month_label
+		power_month.clear()
+
+	power_month.labels(month_label).inc(amper_kw/6)
+	power_day.labels(day_label).inc(amper_kw/6)
+	print(current_dt.strftime("%d/%m/%Y %H:%M:%S - ") + "Amper: "+ str(amper_kw))
+	return make_wsgi_app()
 
 
 @app.route("/")
