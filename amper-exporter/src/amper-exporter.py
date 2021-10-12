@@ -34,7 +34,7 @@ def updateResults():
 	global last_day
 	global last_month
 
-	current_dt = datetime.datetime.now()
+	current_dt = datetime.now()
 	location_dt=current_dt-timedelta(hours=-5)
 	amper_w=get_amper_value()
 	amper_kw=amper_w/1000
